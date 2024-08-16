@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from PIL import Image, ImageTk
 import os
 import re
@@ -23,8 +24,21 @@ def submit():
         condition1.config(image = green)
     else:
         condition1.config(image=red)
-        
+    
+    #displays most recent password attempt in currentPassword label
     currentPassword.config(text="current password: " + password)
+
+
+def save():
+    password = entry.get()
+    
+    #Checks to see if user password meets all conditions to be saved
+    if re.match(passwordVerification, password) and (len(password) >= 8):
+        savedPassword.config(text="saved password = " + password)
+ 
+    else:
+        #if conditions aren't met an error pop up will display 
+        messagebox.showerror("Error", "Password doesn't meet all requirements")
 
 
 #conditions made to see if inputted password meets requirements
@@ -63,6 +77,11 @@ password = entry.get()
 submit = Button(window, text="submit", command=submit, padx=30, pady=20, font=20)
 submit.pack(side = BOTTOM)
 
+#Save button created on GUI to call the save() method
+#allows user the save their password only if ALL conditions are met
+save = Button(window, text="save", command=save, padx=30, pady=20, font=20)
+save.pack(side = BOTTOM)
+
 #Green tick image created to indicate a condition has been met on GUI
 greenPath = os.path.join(script_dir, 'greenTick.png')
 greenTick = Image.open(greenPath).resize((20, 20))
@@ -93,6 +112,9 @@ condition5.pack(anchor=W, padx=150)
 #Label used to display the users most recent password attempt
 currentPassword = Label(window, text="current password: " + password, font=25)
 currentPassword.pack()
+
+savedPassword = Label(window, text="saved password: " + password, font=25)
+savedPassword.pack()
 
 #Dictionary created to link each condition label with the condition itself
 #Will be used to change the image in the label depending on if the condition has been met
