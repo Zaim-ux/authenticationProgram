@@ -4,7 +4,25 @@ import os
 import re
 
 def submit():
+    #retrieves user input into a variable
     password = entry.get()
+    
+    #iterates through the dictionary and uses regex to check if the user input has met each condition
+    #If condition is met then the image in label will change to green tick otherwise red cross
+    for key, value in thisdict.items():
+        if re.match(value, password):
+            key.config(image = green)
+        else:
+            key.config(image = red)  
+
+    for key in thisdict.keys():
+        key.pack()
+    
+    #sepereate condition made to check if the password is of appropriate length
+    if (len(password) >= 8):
+        condition1.config(image = green)
+    else:
+        condition1.config(image=red)
 
 
 #conditions made to see if inputted password meets requirements
@@ -67,6 +85,15 @@ condition4.pack(anchor=W, padx=150)
 
 condition5 = Label(window, text="special characters?", image = red, compound='right')
 condition5.pack(anchor=W, padx=150)
+
+#Dictionary created to link each condition label with the condition itself
+#Will be used to change the image in the label depending on if the condition has been met
+thisdict = {
+    condition2 : lowercaseCheck,
+    condition3 : uppercaseCheck,
+    condition4 : numberCheck,
+    condition5 : characterCheck
+    }
 
 
 window.mainloop()
