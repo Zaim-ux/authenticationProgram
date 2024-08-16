@@ -23,6 +23,8 @@ def submit():
         condition1.config(image = green)
     else:
         condition1.config(image=red)
+        
+    currentPassword.config(text="current password: " + password)
 
 
 #conditions made to see if inputted password meets requirements
@@ -53,6 +55,8 @@ window.title("passwordVerifier")
 entry = Entry()
 entry.config(font= 25)
 entry.pack()
+
+password = entry.get()
 
 #Submit button created on GUI which will call the submit() method
 #allows user to enter their chosen password to be verified
@@ -85,6 +89,10 @@ condition4.pack(anchor=W, padx=150)
 
 condition5 = Label(window, text="special characters?", image = red, compound='right')
 condition5.pack(anchor=W, padx=150)
+
+#Label used to display the users most recent password attempt
+currentPassword = Label(window, text="current password: " + password, font=25)
+currentPassword.pack()
 
 #Dictionary created to link each condition label with the condition itself
 #Will be used to change the image in the label depending on if the condition has been met
