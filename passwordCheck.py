@@ -25,4 +25,19 @@ image = ImageTk.PhotoImage(zIcon)
 window.wm_iconphoto(False, image)
 window.title("passwordVerifier")
 
+#input button created for user to enter password
+entry = Entry()
+entry.config(font= 25)
+entry.pack()
+
+#Green tick image created to indicate a condition has been met on GUI
+greenPath = os.path.join(script_dir, 'greenTick.png')
+greenTick = Image.open(greenPath).resize((20, 20))
+green = ImageTk.PhotoImage(greenTick)
+
+#Red cross image created to indicate a condition hasn't been met on GUI
+redPath = os.path.join(script_dir, 'redX.png')
+redX = Image.open(redPath).resize((20, 20))
+red = ImageTk.PhotoImage(redX)
+
 window.mainloop()
