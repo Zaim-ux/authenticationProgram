@@ -3,9 +3,11 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import os
 import re
-from userDatabase import databaseInsert
+from userDatabase import databaseInsert, uniqueCheck
 
-def submit():
+def test():
+    username = usernameEntry.get()
+    
     #retrieves user input into a variable
     password = passwordEntry.get()
     
@@ -26,6 +28,9 @@ def submit():
     else:
         condition1.config(image=red)
     
+    #checks if username or password already exist in database
+    uniqueCheck(username, password)
+    
     #displays most recent password attempt in currentPassword label
     currentPassword.config(text="current password: " + password)
 
@@ -35,7 +40,7 @@ def save():
     password = passwordEntry.get()
     
     #Checks to see if user password meets all conditions to be saved
-    if re.match(passwordVerification, password) and (len(password) >= 8):
+    if re.match(passwordVerification, password) and (len(password) >= 8) and uniqueCheck(username, password):
         savedPassword.config(text="saved password = " + password)
         #saves both username and password to the database
         databaseInsert(username, password)
@@ -89,8 +94,8 @@ password = passwordEntry.get()
 
 #Submit button created on GUI which will call the submit() method
 #allows user to enter their chosen password to be verified
-submit = Button(window, text="submit", command=submit, padx=30, pady=20, font=20)
-submit.pack(side = BOTTOM)
+test = Button(window, text="test password", command=test, padx=30, pady=20, font=20)
+test.pack(side = BOTTOM)
 
 #Save button created on GUI to call the save() method
 #allows user the save their password only if ALL conditions are met
