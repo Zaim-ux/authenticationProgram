@@ -3,10 +3,13 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import os
 import re
+from userDatabase import databaseInsert, uniqueCheck
 
-def submit():
+def test():
+    username = usernameEntry.get()
+    
     #retrieves user input into a variable
-    password = entry.get()
+    password = passwordEntry.get()
     
     #iterates through the dictionary and uses regex to check if the user input has met each condition
     #If condition is met then the image in label will change to green tick otherwise red cross
@@ -25,20 +28,26 @@ def submit():
     else:
         condition1.config(image=red)
     
+    #checks if username or password already exist in database
+    uniqueCheck(username, password)
+    
     #displays most recent password attempt in currentPassword label
     currentPassword.config(text="current password: " + password)
 
 
 def save():
-    password = entry.get()
+    username = usernameEntry.get()
+    password = passwordEntry.get()
     
     #Checks to see if user password meets all conditions to be saved
-    if re.match(passwordVerification, password) and (len(password) >= 8):
+    if re.match(passwordVerification, password) and (len(password) >= 8) and uniqueCheck(username, password):
         savedPassword.config(text="saved password = " + password)
+        #saves both username and password to the database
+        databaseInsert(username, password)
  
     else:
         #if conditions aren't met an error pop up will display 
-        messagebox.showerror("Error", "Password doesn't meet all requirements")
+        messagebox.showerror("Error", "Please try another username and password")
 
 
 #conditions made to see if inputted password meets requirements
@@ -65,17 +74,28 @@ image = ImageTk.PhotoImage(zIcon)
 window.wm_iconphoto(False, image)
 window.title("passwordVerifier")
 
-#input button created for user to enter password
-entry = Entry()
-entry.config(font= 25)
-entry.pack()
+#input button created for user to enter username
+usernameEntry = Entry()
+usernameEntry.config(font = 25)
+usernameEntry.insert(0, "username")
+usernameEntry.pack()
 
-password = entry.get()
+username = usernameEntry.get()
+
+
+
+#input button created for user to enter password
+passwordEntry = Entry()
+passwordEntry.config(font= 25)
+passwordEntry.insert(0, "password")
+passwordEntry.pack()
+
+password = passwordEntry.get()
 
 #Submit button created on GUI which will call the submit() method
 #allows user to enter their chosen password to be verified
-submit = Button(window, text="submit", command=submit, padx=30, pady=20, font=20)
-submit.pack(side = BOTTOM)
+test = Button(window, text="test password", command=test, padx=30, pady=20, font=20)
+test.pack(side = BOTTOM)
 
 #Save button created on GUI to call the save() method
 #allows user the save their password only if ALL conditions are met
