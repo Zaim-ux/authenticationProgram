@@ -3,6 +3,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 import os
 import re
+from userDatabase import databaseInsert
 
 def submit():
     #retrieves user input into a variable
@@ -35,6 +36,7 @@ def save():
     #Checks to see if user password meets all conditions to be saved
     if re.match(passwordVerification, password) and (len(password) >= 8):
         savedPassword.config(text="saved password = " + password)
+        databaseInsert(password)
  
     else:
         #if conditions aren't met an error pop up will display 
