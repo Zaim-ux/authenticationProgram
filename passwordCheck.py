@@ -47,7 +47,7 @@ def save():
  
     else:
         #if conditions aren't met an error pop up will display 
-        messagebox.showerror("Error", "Password doesn't meet all requirements")
+        messagebox.showerror("Error", "Please try another username and password")
 
 
 #conditions made to see if inputted password meets requirements
