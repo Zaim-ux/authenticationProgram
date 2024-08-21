@@ -7,7 +7,7 @@ from userDatabase import databaseInsert
 
 def submit():
     #retrieves user input into a variable
-    password = entry.get()
+    password = passwordEntry.get()
     
     #iterates through the dictionary and uses regex to check if the user input has met each condition
     #If condition is met then the image in label will change to green tick otherwise red cross
@@ -31,12 +31,14 @@ def submit():
 
 
 def save():
-    password = entry.get()
+    username = usernameEntry.get()
+    password = passwordEntry.get()
     
     #Checks to see if user password meets all conditions to be saved
     if re.match(passwordVerification, password) and (len(password) >= 8):
         savedPassword.config(text="saved password = " + password)
-        databaseInsert(password)
+        #saves both username and password to the database
+        databaseInsert(username, password)
  
     else:
         #if conditions aren't met an error pop up will display 
@@ -67,12 +69,23 @@ image = ImageTk.PhotoImage(zIcon)
 window.wm_iconphoto(False, image)
 window.title("passwordVerifier")
 
-#input button created for user to enter password
-entry = Entry()
-entry.config(font= 25)
-entry.pack()
+#input button created for user to enter username
+usernameEntry = Entry()
+usernameEntry.config(font = 25)
+usernameEntry.insert(0, "username")
+usernameEntry.pack()
 
-password = entry.get()
+username = usernameEntry.get()
+
+
+
+#input button created for user to enter password
+passwordEntry = Entry()
+passwordEntry.config(font= 25)
+passwordEntry.insert(0, "password")
+passwordEntry.pack()
+
+password = passwordEntry.get()
 
 #Submit button created on GUI which will call the submit() method
 #allows user to enter their chosen password to be verified
