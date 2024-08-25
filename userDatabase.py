@@ -15,7 +15,7 @@ def databaseInsert(username, password):
     cursor.execute("""
                 CREATE TABLE IF NOT EXISTS userInfo(
                     username TEXT NOT NULL PRIMARY KEY, 
-                    password TEXT NOT NULL  
+                    password BLOB NOT NULL  
                 )
                 """)
 
