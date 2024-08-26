@@ -6,6 +6,7 @@ import re
 from userDatabase import databaseInsert, uniqueCheck
 from passwordEncryption import encryptPassword
 
+
 def test():
     username = usernameEntry.get()
     
@@ -44,8 +45,8 @@ def save():
     if re.match(passwordVerification, password) and (len(password) >= 8) and uniqueCheck(username, password):
         savedPassword.config(text="saved password = " + password)
         #saves both username and password to the database
-        newPassword = encryptPassword(password)
-        databaseInsert(username, newPassword)
+        passwordSalt, newPassword = encryptPassword(password)
+        databaseInsert(username, newPassword, passwordSalt)
  
     else:
         #if conditions aren't met an error pop up will display 

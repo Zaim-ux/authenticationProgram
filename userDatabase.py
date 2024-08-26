@@ -5,8 +5,9 @@ connection = sqlite3.connect('userInfo.db')
 
 cursor = connection.cursor()
 
+
 #method used to insert valid username and password into a database
-def databaseInsert(username, password):
+def databaseInsert(username, password, salt):
     connection = sqlite3.connect('userInfo.db')
 
     cursor = connection.cursor()
@@ -14,17 +15,19 @@ def databaseInsert(username, password):
     #creates database only if it doesn't exist
     cursor.execute("""
                 CREATE TABLE IF NOT EXISTS userInfo(
-                    username TEXT NOT NULL PRIMARY KEY, 
-                    password BLOB NOT NULL  
+                    userID INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL, 
+                    password BLOB NOT NULL,
+                    salt BLOB NOT NULL
                 )
                 """)
 
     try:
         # Attempt to insert a new user into the userInfo table
         cursor.execute("""
-                    INSERT INTO userInfo (username, password) 
-                    VALUES (?, ?)
-                    """, (username, password))
+                    INSERT INTO userInfo (username, password, salt) 
+                    VALUES (?, ?, ?)
+                    """, (username, password, salt))
         connection.commit()
 
     except sqlite3.IntegrityError as e:
