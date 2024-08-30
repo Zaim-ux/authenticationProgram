@@ -4,6 +4,8 @@ from PIL import Image, ImageTk
 import os
 import re
 from userDatabase import databaseInsert, uniqueCheck
+from passwordEncryption import encryptPassword
+
 
 def test():
     username = usernameEntry.get()
@@ -43,7 +45,9 @@ def save():
     if re.match(passwordVerification, password) and (len(password) >= 8) and uniqueCheck(username, password):
         savedPassword.config(text="saved password = " + password)
         #saves both username and password to the database
-        databaseInsert(username, password)
+        passwordSalt, newPassword = encryptPassword(password)
+        
+        databaseInsert(username, newPassword, passwordSalt)
  
     else:
         #if conditions aren't met an error pop up will display 
@@ -68,6 +72,7 @@ script_dir = os.path.dirname(__file__)
 #window is created and icon is customised 
 window = Tk()
 window.geometry("420x400")
+window.resizable(0, 0)
 zPath = os.path.join(script_dir, 'zIcon.jpg')
 zIcon = Image.open(zPath)
 image = ImageTk.PhotoImage(zIcon)
