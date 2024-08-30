@@ -46,6 +46,7 @@ def save():
         savedPassword.config(text="saved password = " + password)
         #saves both username and password to the database
         passwordSalt, newPassword = encryptPassword(password)
+        
         databaseInsert(username, newPassword, passwordSalt)
  
     else:
@@ -71,6 +72,7 @@ script_dir = os.path.dirname(__file__)
 #window is created and icon is customised 
 window = Tk()
 window.geometry("420x400")
+window.resizable(0, 0)
 zPath = os.path.join(script_dir, 'zIcon.jpg')
 zIcon = Image.open(zPath)
 image = ImageTk.PhotoImage(zIcon)
