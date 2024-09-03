@@ -5,6 +5,7 @@ from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
+from passwordEncryption import decryptPassword
 
 connection = sqlite3.connect('userInfo.db')
 
@@ -48,7 +49,7 @@ def databaseInsert(username, password, salt):
 
 
 #method used to check is username or password already exist in database
-def uniqueCheck(username, password):
+def uniqueCheck(username, password, resetTrue):
     connection = sqlite3.connect('userInfo.db')
     cursor = connection.cursor()
     
@@ -80,27 +81,49 @@ def uniqueCheck(username, password):
         return True
     accpassword = encryptedPassword[0]
     
-    #
-    plainText = decryptPassword(accpassword, sourcePasswordSalt)
+    plainText = decryptPassword(accpassword, sourcePasswordSalt) 
     
+    #checks if the password inputted is equivalent to the one stored in the database and if the username exists
+    if (password == plainText) and (usernameCheck(username)):
+        if not (resetTrue):
+            messagebox.showinfo("Title", "YOURE IN!")
+            return True
+        else:
+            return True
+
+    else:
+        messagebox.showerror("Error", "invalid")
+        cursor.close()
+        connection.close()
+        return False
+
+#Simple method thats scans through the database to check for a users username
+def usernameCheck(username):
     cursor.execute("SELECT 1 username FROM userInfo WHERE username=?", (username,))
     usernameExists = cursor.fetchone() is not None
     
-    
-    if (password == plainText):
-        messagebox.showerror("Error", "password exists")
-    if(usernameExists):
-        messagebox.showerror("Error", "USERNAME EXISTS")
-    #conditions used to inform the user their input attempts already exist in the database
-    #if (usernameExists):
-        #messagebox.showerror("Error", "username already exists")
-    #if (passwordExists):
-        #messagebox.showerror("Error", "password already exists")
+    if (usernameExists):
+        messagebox.showerror("Error", "username already exists")
+        return False
     else:
-        cursor.close()
-        connection.close()
         return True
 
+#This method will use the parameters provided to update a users entry in the database
+#with a new password and the corresponding salt used for encryption
+def updateUserPassword(username, newPassword, salt):
+    
+    connection = sqlite3.connect('userInfo.db')
+    cursor = connection.cursor()
+    
+    cursor.execute("UPDATE userInfo SET password = ?, salt = ? WHERE username = ?", (newPassword, salt, username))
+    connection.commit()
+    
+    cursor.close()
+    connection.close()
+    
+    
+        
+        
 
     
         
