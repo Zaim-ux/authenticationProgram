@@ -5,6 +5,8 @@ import os
 import re
 from userDatabase import databaseInsert, uniqueCheck, usernameCheck, updateUserPassword
 from passwordEncryption import encryptPassword
+
+
 def openPasswordPage(oldWindow, resetTrue):
 
 #Remodelled the entire file to be stored within a method so that the page can be opened 
@@ -44,7 +46,7 @@ def openPasswordPage(oldWindow, resetTrue):
         password = passwordEntry.get()
         
         #Checks to see if user password meets all conditions to be saved
-        if re.match(passwordVerification, password) and (len(password) >= 8) and usernameCheck(username):
+        if re.match(passwordVerification, password) and (len(password) >= 8) and not usernameCheck(username):
             savedPassword.config(text="saved password = " + password)
             #saves both username and password to the database
             passwordSalt, newPassword = encryptPassword(password)
@@ -53,19 +55,22 @@ def openPasswordPage(oldWindow, resetTrue):
     
         else:
             #if conditions aren't met an error pop up will display 
-            messagebox.showerror("Error", "Please try another username")
+            messagebox.showerror("Error", "Details may be invalid or already exist")
 
     def updatePassword():
         username = usernameEntry.get()
         password = passwordEntry.get()
         
         #Checks to see if user password meets all conditions to be saved
-        if re.match(passwordVerification, password) and (len(password) >= 8):
+        if re.match(passwordVerification, password) and (len(password) >= 8) and usernameCheck(username):
             savedPassword.config(text="saved password = " + password)
             #saves both username and password to the database
             passwordSalt, newPassword = encryptPassword(password)
             
             updateUserPassword(username, newPassword, passwordSalt)
+        else:
+            if not usernameCheck(username):
+                messagebox.showerror("Error", "username doesnt exist")
             
 
     #conditions made to see if inputted password meets requirements
@@ -119,7 +124,7 @@ def openPasswordPage(oldWindow, resetTrue):
 
     #Submit button created on GUI which will call the submit() method
     #allows user to enter their chosen password to be verified
-    test = Button(passwordWindow, text="test password", command=test, padx=30, pady=20, font=20)
+    test = Button(passwordWindow, text="Test Details", command=test, padx=30, pady=20, font=20)
     test.pack(side = BOTTOM)
 
     #Save button created on GUI to call the save() method

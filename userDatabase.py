@@ -13,7 +13,6 @@ cursor = connection.cursor()
 
 masterPassword = "Romulus"
 
-
 #method used to insert valid username and password into a database
 def databaseInsert(username, password, salt):
     connection = sqlite3.connect('userInfo.db')
@@ -63,14 +62,14 @@ def uniqueCheck(username, password, resetTrue):
     cursor.execute("SELECT userID FROM userInfo WHERE username=?", (username,))
     userID = cursor.fetchone() 
     if (userID is None):
-        return True
+        return False
     accUserId = userID[0]
     
     #Next the salt used for the encryption algorithm is sourced to be used for the decryption algorithm
     cursor.execute("SELECT salt FROM userInfo WHERE userID=?", (accUserId,))
     passwordSalt = cursor.fetchone()   
     if (passwordSalt is None):
-        return True
+        return False
     #Since the retrived output of the query is a tuple we need to use the first item in that tuple
     sourcePasswordSalt = passwordSalt[0]
     
@@ -78,7 +77,7 @@ def uniqueCheck(username, password, resetTrue):
     cursor.execute("SELECT password FROM userInfo WHERE salt=?", (sourcePasswordSalt,))
     encryptedPassword = cursor.fetchone() 
     if (encryptedPassword is None):
-        return True
+        return False
     accpassword = encryptedPassword[0]
     
     plainText = decryptPassword(accpassword, sourcePasswordSalt) 
@@ -87,15 +86,19 @@ def uniqueCheck(username, password, resetTrue):
     if (password == plainText) and (usernameCheck(username)):
         if not (resetTrue):
             messagebox.showinfo("Title", "YOURE IN!")
-            return True
-        else:
-            return True
-
+        if (resetTrue):
+            messagebox.showinfo("Title", "valid details")
+        cursor.close()
+        connection.close()
+        return True
     else:
-        messagebox.showerror("Error", "invalid")
         cursor.close()
         connection.close()
         return False
+            
+   
+    
+
 
 #Simple method thats scans through the database to check for a users username
 def usernameCheck(username):
@@ -103,10 +106,10 @@ def usernameCheck(username):
     usernameExists = cursor.fetchone() is not None
     
     if (usernameExists):
-        messagebox.showerror("Error", "username already exists")
-        return False
-    else:
+
         return True
+    else:
+        return False
 
 #This method will use the parameters provided to update a users entry in the database
 #with a new password and the corresponding salt used for encryption
@@ -115,8 +118,11 @@ def updateUserPassword(username, newPassword, salt):
     connection = sqlite3.connect('userInfo.db')
     cursor = connection.cursor()
     
-    cursor.execute("UPDATE userInfo SET password = ?, salt = ? WHERE username = ?", (newPassword, salt, username))
-    connection.commit()
+    if not usernameCheck(username):
+        messagebox.showerror("Error", "username doesn't exist")
+    else:
+        cursor.execute("UPDATE userInfo SET password = ?, salt = ? WHERE username = ?", (newPassword, salt, username))
+        connection.commit()
     
     cursor.close()
     connection.close()

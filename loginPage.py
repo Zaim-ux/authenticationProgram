@@ -10,13 +10,12 @@ from passwordCheck import openPasswordPage
 def submit():
     username = usernameEntry.get()
     password = passwordEntry.get()
-    uniqueCheck(username, password)
+    uniqueCheck(username, password, False)
 
 #the forgot password button will take the user to a different window to reset their password
 #which gets updated and encrypted into the database
 def forgotPassword():
     openPasswordPage(window, True)
-    window.withdraw()
 
 #the new user button will take the user to a page where they can enter a username and
 #password and be added onto the database
